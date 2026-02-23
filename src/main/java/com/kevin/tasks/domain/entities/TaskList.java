@@ -3,6 +3,7 @@ package com.kevin.tasks.domain.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public class TaskList {
     //the cascades .remove and .persist ensure that if a tasklist is deleted or saved,
     // any tasks in it are deleted or saved as well respectively
     @OneToMany(mappedBy = "taskList", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
-    private List<Task> tasks;
+    private List<Task> tasks = new ArrayList<>();
 
     @Column(name = "created", nullable = false)
     private LocalDateTime created;
@@ -40,7 +41,7 @@ public class TaskList {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.tasks = tasks;
+        this.tasks = (tasks != null) ? tasks : new ArrayList<>();
         this.created = created;
         this.updated = updated;
     }
@@ -95,14 +96,15 @@ public class TaskList {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TaskList taskList = (TaskList) o;
-        return Objects.equals(id, taskList.id) && Objects.equals(title, taskList.title) && Objects.equals(description, taskList.description) && Objects.equals(tasks, taskList.tasks) && Objects.equals(created, taskList.created) && Objects.equals(updated, taskList.updated);
+        return id != null && Objects.equals(id, taskList.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, description, tasks, created, updated);
+        return id != null ? id.hashCode() : 31;
     }
 
     @Override
